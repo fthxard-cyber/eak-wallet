@@ -2,248 +2,289 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1220">
-<title>EAK WALLET</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#0b1220;color:#f4f7fb;font-family:Arial,sans-serif;padding:20px}
-main{max-width:600px;margin:auto}
-h1{letter-spacing:2px;font-size:22px}
-.muted{color:#9aabc2;font-size:13px}
-.card{background:#17243a;border:1px solid #263650;border-radius:20px;padding:22px;margin:15px 0}
-.balance{font-size:36px;font-weight:bold;margin:12px 0 20px;overflow-wrap:anywhere}
-.stats{display:flex;justify-content:space-between;gap:10px}
-.green{color:#48d597}.red{color:#ff7185}
-.actions{display:flex;gap:10px;margin:16px 0}
-button{border:0;border-radius:12px;padding:13px;font-weight:bold;cursor:pointer}
-.actions button{flex:1;background:#243b5c;color:white}
-.actions button:last-child{background:#59303d}
-input,select{width:100%;padding:13px;margin:7px 0 14px;border:1px solid #354760;border-radius:10px;background:#0b1526;color:white}
-form{background:#17243a;padding:18px;border-radius:18px;margin:15px 0}
-.submit{width:100%;background:#78aaff;color:#081528}
-.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 5px;border-bottom:1px solid #263650}
-.item small{display:block;color:#9aabc2;margin-top:5px}
-.item button{padding:7px;background:#263650;color:white}
-.filters{display:flex;gap:7px;margin:12px 0}
-.filters button{background:#243b5c;color:white}
-.empty{text-align:center;padding:25px;color:#9aabc2}
-.hidden{display:none}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#edf2f8">
+  <meta name="description" content="EAK WALLET — catatan tabungan pribadi yang sederhana dan elegan.">
+  <title>EAK WALLET</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --page: #edf2f8;
+      --white: #ffffff;
+      --navy: #17365c;
+      --navy-2: #244d7a;
+      --muted: #8291a3;
+      --line: #e5eaf0;
+      --field: #f1f5fa;
+      --green: #159b78;
+      --red: #d65c68;
+      --shadow: 0 14px 35px rgba(28, 55, 88, .07);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0; min-height: 100vh; padding: 26px 16px 40px;
+      background: radial-gradient(circle at 50% -10%, #fff 0, var(--page) 55%);
+      color: var(--navy); font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    main { width: 100%; max-width: 460px; margin: 0 auto; }
+    .header { display:flex; align-items:center; justify-content:space-between; gap:14px; margin: 0 2px 23px; }
+    .brand { display:flex; align-items:center; min-width:0; }
+    .brand-name { margin:0; font-size:19px; font-weight:800; letter-spacing:.6px; color:var(--navy); }
+    .brand-tag { margin:3px 0 0; color:#71839a; font-size:9px; font-weight:700; letter-spacing:1.5px; }
+    .edition { border:1px solid #dce5ef; color:#6d8098; background:rgba(255,255,255,.72); border-radius:100px; padding:7px 10px; font-size:9px; font-weight:800; letter-spacing:.8px; white-space:nowrap; }
+    .card { background:var(--white); border:1px solid rgba(220,229,239,.8); border-radius:23px; padding:21px; margin-bottom:15px; box-shadow:var(--shadow); }
+    .balance-card { padding:23px; }
+    .eyebrow { color:#75869b; font-size:10px; font-weight:800; letter-spacing:1.2px; }
+    .balance-line { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:11px; }
+    .balance { margin:0; color:var(--navy); font-size:clamp(29px, 8vw, 38px); line-height:1.2; font-weight:800; letter-spacing:-1.2px; overflow-wrap:anywhere; }
+    .wallet-mark { width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:#edf4fb; color:#315f91; flex:none; }
+    .wallet-mark svg { width:22px; height:22px; }
+    .balance-note { display:flex; align-items:center; gap:7px; margin-top:11px; color:var(--green); font-size:11px; font-weight:600; }
+    .dot { width:7px; height:7px; border-radius:50%; background:var(--green); }
+    .card-heading { margin:0 0 16px; font-size:16px; font-weight:800; color:var(--navy); }
+    .field { margin-bottom:12px; }
+    .field label { display:block; margin:0 0 7px 2px; color:#8291a3; font-size:9px; font-weight:800; letter-spacing:1.1px; }
+    .field input { display:block; width:100%; min-height:51px; padding:14px 15px; border:1px solid #e9eef4; border-radius:13px; outline:none; background:var(--field); color:var(--navy); font:600 14px 'Plus Jakarta Sans',sans-serif; transition:border-color .2s, box-shadow .2s; }
+    .field input::placeholder { color:#a3afbd; font-weight:500; }
+    .field input:focus { border-color:#8fb1d6; box-shadow:0 0 0 3px rgba(49,95,145,.09); }
+    .save-btn { width:100%; min-height:51px; margin-top:3px; border:0; border-radius:14px; background:linear-gradient(135deg,#244d7a,#17365c); color:#fff; font:800 12px 'Plus Jakarta Sans',sans-serif; letter-spacing:.55px; cursor:pointer; box-shadow:0 8px 18px rgba(23,54,92,.17); transition:transform .12s, filter .2s; }
+    .save-btn:active { transform:scale(.985); }
+    .section-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:26px 3px 12px; }
+    .section-head h2 { margin:0; font-size:15px; font-weight:800; color:var(--navy); }
+    .history-actions { display:flex; align-items:center; gap:9px; }
+    .count { color:#8291a3; font-size:10px; font-weight:700; }
+    .reset-btn { border:1px solid #f0d9dd; border-radius:9px; padding:8px 10px; background:#fff7f8; color:#c65362; font:800 9px 'Plus Jakarta Sans',sans-serif; letter-spacing:.35px; cursor:pointer; white-space:nowrap; }
+    .reset-btn:active { background:#fdecef; }
+    .history { padding:5px 19px; }
+    .transaction { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:15px 0; border-bottom:1px solid var(--line); }
+    .transaction:last-child { border-bottom:0; }
+    .transaction-info { min-width:0; }
+    .transaction-title { margin:0; color:var(--navy); font-size:12px; font-weight:700; overflow-wrap:anywhere; }
+    .transaction-date { margin:4px 0 0; color:#91a0b1; font-size:10px; font-weight:500; }
+    .transaction-right { display:flex; align-items:center; gap:9px; flex:none; }
+    .amount { color:var(--green); font-size:12px; font-weight:800; white-space:nowrap; }
+    .amount.legacy-out { color:var(--red); }
+    .delete-btn { width:28px; height:28px; display:grid; place-items:center; border:0; border-radius:9px; background:#f5f7fa; color:#91a0b1; font-size:15px; cursor:pointer; }
+    .delete-btn:active { background:#fdecef; color:var(--red); }
+    .empty { padding:30px 12px; text-align:center; color:#91a0b1; font-size:12px; }
+    .empty-icon { display:block; margin:0 auto 9px; color:#b4c1cf; }
+    .footer { padding:9px 0 0; text-align:center; color:#9aa8b8; font-size:9px; font-weight:700; letter-spacing:1.3px; }
+    .toast { position:fixed; left:50%; bottom:22px; transform:translate(-50%, 20px); opacity:0; pointer-events:none; padding:11px 16px; border-radius:12px; background:#17365c; color:#fff; font-size:12px; font-weight:700; box-shadow:0 8px 25px rgba(23,54,92,.22); transition:all .25s; z-index:5; white-space:nowrap; }
+    .toast.show { opacity:1; transform:translate(-50%,0); }
+    @media (max-width:360px) { body { padding:18px 12px 30px; } .card { padding:17px; } .edition { font-size:8px; padding:6px 8px; } }
+  </style>
 </head>
 <body>
-<main>
-<h1> EAK WALLET</h1>
-<p class="muted">CATAT UANG SAKU PRIBADIMU</p>
+  <main>
+    <header class="header">
+      <div class="brand">
+        <div>
+          <h1 class="brand-name">EAK WALLET</h1>
+          <p class="brand-tag">SAVE &#8226; TRACK &#8226; GROW</p>
+        </div>
+      </div>
+      <span class="edition">ARCTIC WHITE</span>
+    </header>
 
-<section class="card">
-<div class="muted">SALDO UANG FISIK</div>
-<div class="balance" id="saldo">Rp0</div>
-<div class="stats">
-<div><small class="muted">Uang masuk</small><br><b class="green" id="masuk">Rp0</b></div>
-<div><small class="muted">Uang keluar</small><br><b class="red" id="keluar">Rp0</b></div>
-</div>
-</section>
+    <section class="card balance-card" aria-label="Total tabungan">
+      <div class="eyebrow">TOTAL TABUNGAN</div>
+      <div class="balance-line">
+        <h2 class="balance" id="saldo">Rp 0</h2>
+        <div class="wallet-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v16H6.5A2.5 2.5 0 0 1 4 17.5z"/><path d="M4 7h13.5A2.5 2.5 0 0 1 20 9.5V14h-5a2.5 2.5 0 0 1 0-5h5"/><path d="M15 11.5h.01"/></svg>
+        </div>
+      </div>
+      <div class="balance-note"><span class="dot"></span>Your savings, your future.</div>
+    </section>
 
-<div class="actions">
-<button onclick="buka('masuk')">＋ Uang Masuk</button>
-<button onclick="buka('keluar')">− Uang Keluar</button>
-</div>
+    <section class="card">
+      <h2 class="card-heading">Tambah Tabungan</h2>
+      <form id="form">
+        <div class="field">
+          <label for="nominal">NOMINAL TABUNGAN</label>
+          <input id="nominal" type="number" inputmode="numeric" min="1" step="1" placeholder="Masukkan nominal (Rp)" required>
+        </div>
+        <div class="field">
+          <label for="keterangan">KETERANGAN</label>
+          <input id="keterangan" type="text" maxlength="60" placeholder="Contoh: Tabungan hari ini" required>
+        </div>
+        <button class="save-btn" type="submit">+ SIMPAN TABUNGAN</button>
+      </form>
+    </section>
 
-<form id="form" class="hidden">
-<h3 id="judul">Transaksi</h3>
-<label>Nominal (Rp)</label>
-<input id="nominal" type="number" min="1" step="1" placeholder="Contoh: 200000" required>
-<label>Keterangan</label>
-<input id="keterangan" maxlength="60" placeholder="Contoh: Beli makan" required>
-<label>Kategori</label>
-<select id="kategori">
-<option>Uang saku</option>
-<option>Makanan & minuman</option>
-<option>Transportasi</option>
-<option>Jajan</option>
-<option>Belanja</option>
-<option>Pendidikan</option>
-<option>Hiburan</option>
-<option>Lainnya</option>
-</select>
-<label>Tanggal</label>
-<input id="tanggal" type="date" required>
-<button class="submit" type="submit">Simpan Transaksi</button>
-<button type="button" onclick="tutup()" style="width:100%;margin-top:8px;background:#354760;color:white">Batal</button>
-</form>
+    <div class="section-head">
+      <h2>Riwayat Transaksi</h2>
+      <div class="history-actions">
+        <span class="count" id="jumlah">0 TRANSAKSI</span>
+        <button class="reset-btn" id="reset" type="button">RESET TABUNGAN</button>
+      </div>
+    </div>
+    <section class="card history" id="riwayat" aria-live="polite">
+      <div class="empty">Belum ada tabungan. Yuk mulai menabung!</div>
+    </section>
+    <footer class="footer">EAK WALLET &#8226; PERSONAL SAVINGS</footer>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
 
-<div class="card">
-<h3>Ringkasan Bulan Ini</h3>
-<div class="stats">
-<div><small class="muted">Pemasukan</small><br><b class="green" id="bulanMasuk">Rp0</b></div>
-<div><small class="muted">Pengeluaran</small><br><b class="red" id="bulanKeluar">Rp0</b></div>
-</div>
-</div>
+  <script>
+    const KEY = 'eak_wallet_v3';
+    const $ = id => document.getElementById(id);
+    let data = loadData();
 
-<h3>Riwayat Transaksi</h3>
-<div class="filters">
-<button onclick="aturFilter('semua')">Semua</button>
-<button onclick="aturFilter('masuk')">Masuk</button>
-<button onclick="aturFilter('keluar')">Keluar</button>
-</div>
-<section class="card" id="riwayat">
-<div class="empty">Belum ada transaksi.</div>
-</section>
+    function loadData() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+        return Array.isArray(saved) ? saved.filter(t => t && typeof t === 'object' && Number.isFinite(Number(t.nominal))) : [];
+      } catch (error) {
+        console.error('Data EAK WALLET tidak dapat dibaca:', error);
+        return [];
+      }
+    }
 
-<p class="muted" style="text-align:center">EAK WALLET · Buku kas pribadi</p>
-<button onclick="resetData()" style="width:100%;background:#59303d;color:white">Reset Semua Data</button>
-</main>
+    function saveData() {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(data));
+        return true;
+      } catch (error) {
+        alert('Penyimpanan gagal. Pastikan ruang penyimpanan browser tersedia.');
+        return false;
+      }
+    }
 
-<script>
-const KEY="eak_wallet_data";
-let data=JSON.parse(localStorage.getItem(KEY)||"[]");
-let jenis="masuk";
-let editId=null;
-let filter="semua";
+    function rp(value) {
+      const amount = Math.round(Number(value) || 0);
+      return 'Rp ' + String(amount);
+    }
 
-const el=id=>document.getElementById(id);
-const rp=n=>"Rp"+Number(n).toLocaleString("id-ID");
-const hariIni=()=>new Date().toISOString().slice(0,10);
+    function formatDate(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return 'Tanggal tidak tersedia';
+      return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
 
-function simpan(){
- localStorage.setItem(KEY,JSON.stringify(data));
-}
+    function showToast(message) {
+      const toast = $('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 2200);
+    }
 
-function buka(type,id=null){
- jenis=type;
- editId=id;
- let t=data.find(x=>x.id===id);
- el("judul").textContent=t?"Edit Transaksi":type==="masuk"?"Uang Masuk":"Uang Keluar";
- el("nominal").value=t?t.nominal:"";
- el("keterangan").value=t?t.keterangan:"";
- el("kategori").value=t?t.kategori:type==="masuk"?"Uang saku":"Makanan & minuman";
- el("tanggal").value=t?t.tanggal:hariIni();
- el("form").classList.remove("hidden");
- el("form").scrollIntoView({behavior:"smooth"});
-}
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[char]);
+    }
 
-function tutup(){
- el("form").classList.add("hidden");
- editId=null;
-}
+    $('form').addEventListener('submit', event => {
+      event.preventDefault();
+      const nominal = Number($('nominal').value);
+      const keterangan = $('keterangan').value.trim();
 
-el("form").addEventListener("submit",function(e){
- e.preventDefault();
- let nominal=Number(el("nominal").value);
- let keterangan=el("keterangan").value.trim();
- let tanggal=el("tanggal").value;
+      if (!Number.isSafeInteger(nominal) || nominal <= 0) {
+        alert('Masukkan nominal tabungan berupa angka bulat lebih dari 0.');
+        return;
+      }
 
- if(!Number.isSafeInteger(nominal)||nominal<=0||!keterangan||!tanggal){
-  alert("Periksa kembali data transaksi.");
-  return;
- }
+      if (!keterangan) {
+        alert('Isi keterangan tabungan terlebih dahulu.');
+        return;
+      }
 
- let transaksi={
-  id:editId||Date.now().toString(),
-  jenis,nominal,keterangan,
-  kategori:el("kategori").value,
-  tanggal
- };
+      const transaction = {
+        id: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2),
+        jenis: 'tabungan',
+        nominal,
+        keterangan,
+        tanggal: new Date().toISOString()
+      };
 
- if(editId){
-  let index=data.findIndex(x=>x.id===editId);
-  data[index]=transaksi;
- }else{
-  data.push(transaksi);
- }
+      data.unshift(transaction);
+      if (!saveData()) { data.shift(); return; }
+      $('form').reset();
+      render();
+      showToast('Tabungan berhasil disimpan');
+    });
 
- simpan();
- render();
- tutup();
-});
+    function hapus(id) {
+      if (!confirm('Hapus transaksi tabungan ini?')) return;
+      const previous = data;
+      data = data.filter(item => String(item.id) !== String(id));
+      if (!saveData()) { data = previous; return; }
+      render();
+      showToast('Transaksi dihapus');
+    }
 
-function aturFilter(f){
- filter=f;
- render();
-}
+    function resetTabungan() {
+      if (!data.length) {
+        showToast('Belum ada tabungan untuk di-reset');
+        return;
+      }
 
-function hapus(id){
- if(confirm("Hapus transaksi ini?")){
-  data=data.filter(x=>x.id!==id);
-  simpan();
-  render();
- }
-}
+      const yakin = confirm('Reset seluruh tabungan dan riwayat transaksi? Semua catatan akan dihapus dari perangkat ini. Tindakan ini tidak bisa dibatalkan.');
+      if (!yakin) return;
 
-function edit(id){
- let t=data.find(x=>x.id===id);
- if(t)buka(t.jenis,id);
-}
+      const previous = data;
+      data = [];
+      if (!saveData()) { data = previous; return; }
+      render();
+      showToast('Tabungan berhasil di-reset');
+    }
 
-function resetData(){
- if(confirm("Yakin menghapus semua transaksi?")){
-  data=[];
-  simpan();
-  render();
- }
-}
+    $('reset').addEventListener('click', resetTabungan);
 
-function render(){
- let totalMasuk=0,totalKeluar=0;
- let bulanMasuk=0,bulanKeluar=0;
- let bulan=hariIni().slice(0,7);
+    function render() {
+      const total = data.reduce((sum, item) => {
+        const amount = Number(item.nominal) || 0;
+        if (item.jenis === 'keluar') return sum - amount;
+        return sum + amount;
+      }, 0);
 
- data.forEach(t=>{
-  if(t.jenis==="masuk"){
-   totalMasuk+=t.nominal;
-   if(t.tanggal.startsWith(bulan))bulanMasuk+=t.nominal;
-  }else{
-   totalKeluar+=t.nominal;
-   if(t.tanggal.startsWith(bulan))bulanKeluar+=t.nominal;
-  }
- });
+      $('saldo').textContent = rp(total);
+      $('jumlah').textContent = data.length + ' TRANSAKSI';
 
- el("saldo").textContent=rp(totalMasuk-totalKeluar);
- el("masuk").textContent=rp(totalMasuk);
- el("keluar").textContent=rp(totalKeluar);
- el("bulanMasuk").textContent=rp(bulanMasuk);
- el("bulanKeluar").textContent=rp(bulanKeluar);
+      if (!data.length) {
+        $('riwayat').innerHTML = '<div class="empty">Belum ada tabungan. Yuk mulai menabung!</div>';
+        return;
+      }
 
- let list=[...data].sort((a,b)=>
-  b.tanggal.localeCompare(a.tanggal)||b.id.localeCompare(a.id)
- );
+      $('riwayat').innerHTML = data.map(item => {
+        const isLegacyOut = item.jenis === 'keluar';
+        const sign = isLegacyOut ? '\u2212' : '+';
+        const amountClass = isLegacyOut ? 'amount legacy-out' : 'amount';
+        const title = item.keterangan || (isLegacyOut ? 'Pengeluaran lama' : 'Tabungan');
 
- if(filter!=="semua"){
-  list=list.filter(t=>t.jenis===filter);
- }
+        return `<article class="transaction">
+          <div class="transaction-info">
+            <p class="transaction-title">${escapeHTML(title)}</p>
+            <p class="transaction-date">${escapeHTML(formatDate(item.tanggal))}</p>
+          </div>
+          <div class="transaction-right">
+            <span class="${amountClass}">${sign}${rp(item.nominal)}</span>
+            <button class="delete-btn" type="button" aria-label="Hapus transaksi" title="Hapus transaksi" data-delete="${escapeHTML(item.id ?? '')}">&#215;</button>
+          </div>
+        </article>`;
+      }).join('');
+    }
 
- if(!list.length){
-  el("riwayat").innerHTML='<div class="empty">Belum ada transaksi.</div>';
-  return;
- }
+    $('riwayat').addEventListener('click', event => {
+      const button = event.target.closest('[data-delete]');
+      if (button) hapus(button.dataset.delete);
+    });
 
- el("riwayat").innerHTML=list.map(t=>`
- <div class="item">
-  <div style="min-width:0">
-   <b>${aman(t.keterangan)}</b>
-   <small>${aman(t.kategori)} · ${t.tanggal}</small>
-   <b class="${t.jenis==="masuk"?"green":"red"}">
-    ${t.jenis==="masuk"?"+":"−"}${rp(t.nominal)}
-   </b>
-  </div>
-  <div style="display:flex;gap:5px">
-   <button onclick="edit('${t.id}')">✎</button>
-   <button onclick="hapus('${t.id}')">×</button>
-  </div>
- </div>
- `).join("");
-}
+    render();
 
-function aman(s){
- return String(s).replace(/[&<>"']/g,c=>({
- "&":"&amp;","<":"&lt;",">":"&gt;",
- '"':"&quot;","'":"&#39;"
- }[c]));
-}
-
-render();
-</script>
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(error => console.log('Service worker:', error));
+      });
+    }
+  </script>
 </body>
 </html>
