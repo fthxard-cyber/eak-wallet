@@ -4,262 +4,244 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1220">
 <title>EAK WALLET</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f2f4f7;
-  margin: 0;
-  padding: 20px;
-  color: #222;
-}
-.container {
-  max-width: 450px;
-  margin: auto;
-}
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 16px;
-  margin-bottom: 15px;
-}
-.balance {
-  background: #153c32;
-  color: white;
-}
-.balance h1 {
-  font-size: 32px;
-  overflow-wrap: anywhere;
-}
-.stats {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-}
-input, select, button {
-  width: 100%;
-  padding: 13px;
-  margin: 7px 0;
-  border: 1px solid #ddd;
-  border-radius: 9px;
-  box-sizing: border-box;
-}
-button {
-  background: #153c32;
-  color: white;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
-.item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
-}
-.income { color: green; }
-.expense { color: red; }
-.delete {
-  width: auto;
-  padding: 7px 9px;
-  background: #ddd;
-  color: #222;
-}
-.reset {
-  background: #b3261e;
-}
-small { color: #777; }
+*{box-sizing:border-box}
+body{margin:0;background:#0b1220;color:#f4f7fb;font-family:Arial,sans-serif;padding:20px}
+main{max-width:600px;margin:auto}
+h1{letter-spacing:2px;font-size:22px}
+.muted{color:#9aabc2;font-size:13px}
+.card{background:#17243a;border:1px solid #263650;border-radius:20px;padding:22px;margin:15px 0}
+.balance{font-size:36px;font-weight:bold;margin:12px 0 20px;overflow-wrap:anywhere}
+.stats{display:flex;justify-content:space-between;gap:10px}
+.green{color:#48d597}.red{color:#ff7185}
+.actions{display:flex;gap:10px;margin:16px 0}
+button{border:0;border-radius:12px;padding:13px;font-weight:bold;cursor:pointer}
+.actions button{flex:1;background:#243b5c;color:white}
+.actions button:last-child{background:#59303d}
+input,select{width:100%;padding:13px;margin:7px 0 14px;border:1px solid #354760;border-radius:10px;background:#0b1526;color:white}
+form{background:#17243a;padding:18px;border-radius:18px;margin:15px 0}
+.submit{width:100%;background:#78aaff;color:#081528}
+.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 5px;border-bottom:1px solid #263650}
+.item small{display:block;color:#9aabc2;margin-top:5px}
+.item button{padding:7px;background:#263650;color:white}
+.filters{display:flex;gap:7px;margin:12px 0}
+.filters button{background:#243b5c;color:white}
+.empty{text-align:center;padding:25px;color:#9aabc2}
+.hidden{display:none}
 </style>
 </head>
-
 <body>
-<div class="container">
+<main>
+<h1> EAK WALLET</h1>
+<p class="muted">CATAT UANG SAKU PRIBADIMU</p>
 
-<div class="card balance">
-  <h3>EAK WALLET 💰</h3>
-  <p>Total Saldo</p>
-  <h1 id="balance">Rp0</h1>
-  <div class="stats">
-    <div>Masuk<br><b id="income">Rp0</b></div>
-    <div>Keluar<br><b id="expense">Rp0</b></div>
-  </div>
+<section class="card">
+<div class="muted">SALDO UANG FISIK</div>
+<div class="balance" id="saldo">Rp0</div>
+<div class="stats">
+<div><small class="muted">Uang masuk</small><br><b class="green" id="masuk">Rp0</b></div>
+<div><small class="muted">Uang keluar</small><br><b class="red" id="keluar">Rp0</b></div>
 </div>
+</section>
+
+<div class="actions">
+<button onclick="buka('masuk')">＋ Uang Masuk</button>
+<button onclick="buka('keluar')">− Uang Keluar</button>
+</div>
+
+<form id="form" class="hidden">
+<h3 id="judul">Transaksi</h3>
+<label>Nominal (Rp)</label>
+<input id="nominal" type="number" min="1" step="1" placeholder="Contoh: 200000" required>
+<label>Keterangan</label>
+<input id="keterangan" maxlength="60" placeholder="Contoh: Beli makan" required>
+<label>Kategori</label>
+<select id="kategori">
+<option>Uang saku</option>
+<option>Makanan & minuman</option>
+<option>Transportasi</option>
+<option>Jajan</option>
+<option>Belanja</option>
+<option>Pendidikan</option>
+<option>Hiburan</option>
+<option>Lainnya</option>
+</select>
+<label>Tanggal</label>
+<input id="tanggal" type="date" required>
+<button class="submit" type="submit">Simpan Transaksi</button>
+<button type="button" onclick="tutup()" style="width:100%;margin-top:8px;background:#354760;color:white">Batal</button>
+</form>
 
 <div class="card">
-  <h3>Tambah Transaksi</h3>
-  <input id="description" placeholder="Keterangan transaksi">
-  <input id="amount" type="text"
-    inputmode="numeric" placeholder="Jumlah uang">
-
-  <select id="type">
-    <option value="income">Uang Masuk</option>
-    <option value="expense">Uang Keluar</option>
-  </select>
-
-  <input id="date" type="date">
-  <button onclick="addTransaction()">SIMPAN TRANSAKSI</button>
+<h3>Ringkasan Bulan Ini</h3>
+<div class="stats">
+<div><small class="muted">Pemasukan</small><br><b class="green" id="bulanMasuk">Rp0</b></div>
+<div><small class="muted">Pengeluaran</small><br><b class="red" id="bulanKeluar">Rp0</b></div>
+</div>
 </div>
 
-<div class="card">
-  <h3>Riwayat Transaksi</h3>
-  <div id="history"></div>
+<h3>Riwayat Transaksi</h3>
+<div class="filters">
+<button onclick="aturFilter('semua')">Semua</button>
+<button onclick="aturFilter('masuk')">Masuk</button>
+<button onclick="aturFilter('keluar')">Keluar</button>
 </div>
+<section class="card" id="riwayat">
+<div class="empty">Belum ada transaksi.</div>
+</section>
 
-<div class="card">
-  <h3>Pengaturan</h3>
-  <button class="reset" onclick="resetWallet()">
-    🗑️ RESET SEMUA DATA
-  </button>
-  <small>Reset akan menghapus seluruh riwayat dan saldo.</small>
-</div>
-
-</div>
+<p class="muted" style="text-align:center">EAK WALLET · Buku kas pribadi</p>
+<button onclick="resetData()" style="width:100%;background:#59303d;color:white">Reset Semua Data</button>
+</main>
 
 <script>
-let transactions = JSON.parse(
-  localStorage.getItem("transactions") || "[]"
-);
+const KEY="eak_wallet_data";
+let data=JSON.parse(localStorage.getItem(KEY)||"[]");
+let jenis="masuk";
+let editId=null;
+let filter="semua";
 
-const rupiah = n =>
-  new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0
-  }).format(n);
+const el=id=>document.getElementById(id);
+const rp=n=>"Rp"+Number(n).toLocaleString("id-ID");
+const hariIni=()=>new Date().toISOString().slice(0,10);
 
-const amountInput = document.getElementById("amount");
+function simpan(){
+ localStorage.setItem(KEY,JSON.stringify(data));
+}
 
-amountInput.addEventListener("input", function() {
-  let angka = this.value.replace(/\D/g, "");
-  this.value = angka
-    ? new Intl.NumberFormat("id-ID").format(angka)
-    : "";
+function buka(type,id=null){
+ jenis=type;
+ editId=id;
+ let t=data.find(x=>x.id===id);
+ el("judul").textContent=t?"Edit Transaksi":type==="masuk"?"Uang Masuk":"Uang Keluar";
+ el("nominal").value=t?t.nominal:"";
+ el("keterangan").value=t?t.keterangan:"";
+ el("kategori").value=t?t.kategori:type==="masuk"?"Uang saku":"Makanan & minuman";
+ el("tanggal").value=t?t.tanggal:hariIni();
+ el("form").classList.remove("hidden");
+ el("form").scrollIntoView({behavior:"smooth"});
+}
+
+function tutup(){
+ el("form").classList.add("hidden");
+ editId=null;
+}
+
+el("form").addEventListener("submit",function(e){
+ e.preventDefault();
+ let nominal=Number(el("nominal").value);
+ let keterangan=el("keterangan").value.trim();
+ let tanggal=el("tanggal").value;
+
+ if(!Number.isSafeInteger(nominal)||nominal<=0||!keterangan||!tanggal){
+  alert("Periksa kembali data transaksi.");
+  return;
+ }
+
+ let transaksi={
+  id:editId||Date.now().toString(),
+  jenis,nominal,keterangan,
+  kategori:el("kategori").value,
+  tanggal
+ };
+
+ if(editId){
+  let index=data.findIndex(x=>x.id===editId);
+  data[index]=transaksi;
+ }else{
+  data.push(transaksi);
+ }
+
+ simpan();
+ render();
+ tutup();
 });
 
-function save() {
-  localStorage.setItem(
-    "transactions",
-    JSON.stringify(transactions)
-  );
+function aturFilter(f){
+ filter=f;
+ render();
+}
+
+function hapus(id){
+ if(confirm("Hapus transaksi ini?")){
+  data=data.filter(x=>x.id!==id);
+  simpan();
   render();
+ }
 }
 
-function addTransaction() {
-  const description =
-    document.getElementById("description").value.trim();
-
-  const amount = Number(
-    amountInput.value.replace(/\D/g, "")
-  );
-
-  const type = document.getElementById("type").value;
-  const date = document.getElementById("date").value;
-
-  if (!description || amount <= 0 ||
-      !Number.isSafeInteger(amount) || !date) {
-    alert("Isi semua data dengan benar!");
-    return;
-  }
-
-  transactions.unshift({
-    id: Date.now(),
-    description,
-    amount,
-    type,
-    date
-  });
-
-  document.getElementById("description").value = "";
-  amountInput.value = "";
-
-  save();
+function edit(id){
+ let t=data.find(x=>x.id===id);
+ if(t)buka(t.jenis,id);
 }
 
-function removeTransaction(id) {
-  if (!confirm("Hapus transaksi ini?")) return;
-
-  transactions = transactions.filter(t => t.id !== id);
-  save();
-}
-
-function resetWallet() {
-  const yakin = confirm(
-    "PERINGATAN!\nSemua transaksi dan saldo akan dihapus. Yakin?"
-  );
-
-  if (!yakin) return;
-
-  transactions = [];
-  localStorage.removeItem("transactions");
-
+function resetData(){
+ if(confirm("Yakin menghapus semua transaksi?")){
+  data=[];
+  simpan();
   render();
-  alert("EAK WALLET berhasil direset!");
+ }
 }
 
-function render() {
-  let income = 0;
-  let expense = 0;
+function render(){
+ let totalMasuk=0,totalKeluar=0;
+ let bulanMasuk=0,bulanKeluar=0;
+ let bulan=hariIni().slice(0,7);
 
-  transactions.forEach(t => {
-    if (t.type === "income") income += t.amount;
-    else expense += t.amount;
-  });
-
-  document.getElementById("balance").textContent =
-    rupiah(income - expense);
-
-  document.getElementById("income").textContent =
-    rupiah(income);
-
-  document.getElementById("expense").textContent =
-    rupiah(expense);
-
-  const history = document.getElementById("history");
-
-  if (transactions.length === 0) {
-    history.innerHTML = "<p>Belum ada transaksi.</p>";
-    return;
+ data.forEach(t=>{
+  if(t.jenis==="masuk"){
+   totalMasuk+=t.nominal;
+   if(t.tanggal.startsWith(bulan))bulanMasuk+=t.nominal;
+  }else{
+   totalKeluar+=t.nominal;
+   if(t.tanggal.startsWith(bulan))bulanKeluar+=t.nominal;
   }
+ });
 
-  history.innerHTML = "";
+ el("saldo").textContent=rp(totalMasuk-totalKeluar);
+ el("masuk").textContent=rp(totalMasuk);
+ el("keluar").textContent=rp(totalKeluar);
+ el("bulanMasuk").textContent=rp(bulanMasuk);
+ el("bulanKeluar").textContent=rp(bulanKeluar);
 
-  transactions.forEach(t => {
-    const item = document.createElement("div");
-    item.className = "item";
+ let list=[...data].sort((a,b)=>
+  b.tanggal.localeCompare(a.tanggal)||b.id.localeCompare(a.id)
+ );
 
-    const detail = document.createElement("div");
-    const name = document.createElement("b");
-    name.textContent = t.description;
+ if(filter!=="semua"){
+  list=list.filter(t=>t.jenis===filter);
+ }
 
-    const date = document.createElement("small");
-    date.textContent = t.date;
+ if(!list.length){
+  el("riwayat").innerHTML='<div class="empty">Belum ada transaksi.</div>';
+  return;
+ }
 
-    detail.append(name, document.createElement("br"), date);
-
-    const right = document.createElement("div");
-
-    const amount = document.createElement("span");
-    amount.className =
-      t.type === "income" ? "income" : "expense";
-
-    amount.textContent =
-      (t.type === "income" ? "+" : "-") + rupiah(t.amount);
-
-    const del = document.createElement("button");
-    del.className = "delete";
-    del.textContent = "Hapus";
-    del.onclick = () => removeTransaction(t.id);
-
-    right.append(amount, del);
-    item.append(detail, right);
-    history.appendChild(item);
-  });
+ el("riwayat").innerHTML=list.map(t=>`
+ <div class="item">
+  <div style="min-width:0">
+   <b>${aman(t.keterangan)}</b>
+   <small>${aman(t.kategori)} · ${t.tanggal}</small>
+   <b class="${t.jenis==="masuk"?"green":"red"}">
+    ${t.jenis==="masuk"?"+":"−"}${rp(t.nominal)}
+   </b>
+  </div>
+  <div style="display:flex;gap:5px">
+   <button onclick="edit('${t.id}')">✎</button>
+   <button onclick="hapus('${t.id}')">×</button>
+  </div>
+ </div>
+ `).join("");
 }
 
-document.getElementById("date").value =
-  new Date().toLocaleDateString("en-CA");
+function aman(s){
+ return String(s).replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",
+ '"':"&quot;","'":"&#39;"
+ }[c]));
+}
 
 render();
 </script>
