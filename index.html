@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10131b">
+<meta name="description" content="EAK WALLET - catatan uang masuk, keluar, dan target tabungan.">
+<link rel="manifest" href="manifest.json">
+<title>EAK WALLET</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0e14;--panel:#151a24;--panel2:#1c2330;--text:#f4f6fb;--muted:#98a3b7;--green:#42d392;--red:#ff6b78;--line:#293244}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#192337 0,#0b0e14 42%);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+main{max-width:620px;margin:auto;padding:22px 16px 44px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.brand{font-weight:900;letter-spacing:1.5px;font-size:22px}.sub{color:var(--muted);font-size:12px;margin-top:3px}.pill{border:1px solid var(--line);border-radius:99px;padding:7px 11px;color:var(--muted);font-size:12px}
+.card{background:linear-gradient(145deg,#1b2433,#121722);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:0 12px 30px #0003}.label{color:var(--muted);font-size:13px}.balance{font-size:clamp(30px,8vw,40px);font-weight:850;letter-spacing:-1px;margin:7px 0 15px;overflow-wrap:anywhere}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#ffffff08;border-radius:13px;padding:12px}.stat strong{display:block;margin-top:5px;font-size:17px}.green{color:var(--green)}.red{color:var(--red)}
+h2{font-size:16px;margin:0 0 14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}input,select,button{font:inherit}input,select{width:100%;background:#0d121b;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:13px;outline:none}input:focus,select:focus{border-color:#6489d8}.full{grid-column:1/-1}button{border:0;border-radius:12px;padding:13px 15px;font-weight:750;cursor:pointer}.primary{background:var(--green);color:#082116}.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.danger{background:#3a1e28;color:#ff9ba4}.section-head{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 12px}.item{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px 2px;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item small{display:block;color:var(--muted);margin-top:4px}.amount{font-weight:800;white-space:nowrap}.empty{color:var(--muted);text-align:center;padding:22px 8px;font-size:14px}.goalrow{display:flex;justify-content:space-between;gap:10px;margin:10px 0}.bar{height:9px;background:#0b1018;border-radius:99px;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(90deg,#42d392,#82e7b7);width:0}.foot{color:var(--muted);font-size:11px;text-align:center;margin-top:22px;line-height:1.6}
+</style>
+</head>
+<body>
+<main>
+ <div class="top"><div><div class="brand">EAK WALLET</div><div class="sub">Your money, under control.</div></div><div class="pill">PERSONAL FINANCE</div></div>
+ <section class="card">
+  <div class="label">Total saldo / Current balance</div><div class="balance" id="balance">Rp0</div>
+  <div class="stats"><div class="stat"><span class="label">Uang masuk</span><strong class="green" id="income">Rp0</strong></div><div class="stat"><span class="label">Uang keluar</span><strong class="red" id="expense">Rp0</strong></div></div>
+ </section>
+ <section class="card">
+  <h2>Tambah transaksi</h2>
+  <form id="txForm" class="grid">
+   <select id="type" aria-label="Jenis transaksi"><option value="in">Uang masuk</option><option value="out">Uang keluar</option></select>
+   <input id="amount" type="number" min="1" step="1" placeholder="Nominal (Rp)" required>
+   <input id="note" class="full" maxlength="60" placeholder="Keterangan, contoh: uang saku" required>
+   <button class="primary full" type="submit">+ Simpan transaksi</button>
+  </form>
+ </section>
+ <section class="card">
+  <h2>Target tabungan bulanan</h2>
+  <div class="grid"><input id="goal" type="number" min="0" placeholder="Target tabungan (Rp)"><button class="secondary" id="saveGoal" type="button">Simpan target</button></div>
+  <div class="goalrow"><span class="label">Progress bulan ini</span><strong id="progressText">0%</strong></div>
+  <div class="bar"><span id="progressBar"></span></div>
+  <div class="label" id="goalCaption" style="margin-top:9px">Atur target untuk mulai melacak tabungan.</div>
+ </section>
+ <div class="section-head"><h2>Riwayat transaksi</h2><button class="secondary" id="export" type="button" style="padding:8px 11px;font-size:12px">Ekspor CSV</button></div>
+ <section class="card" id="history"><div class="empty">Belum ada transaksi. Yuk catat transaksi pertamamu!</div></section>
+ <button class="danger" id="reset" type="button" style="width:100%">Hapus semua data</button>
+ <div class="foot">Data disimpan di perangkat ini (local storage). Ekspor CSV secara berkala sebagai cadangan.<br>Made for you — EAK WALLET.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const KEY='eak_wallet_v1';
+let state={tx:[],goal:0};
+try{state=Object.assign(state,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+const rupiah=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n||0);
+function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
+function render(){
+ const month=new Date().toISOString().slice(0,7);
+ const ins=state.tx.filter(t=>t.type==='in').reduce((a,t)=>a+t.amount,0);
+ const outs=state.tx.filter(t=>t.type==='out').reduce((a,t)=>a+t.amount,0);
+ $('balance').textContent=rupiah(ins-outs);$('income').textContent=rupiah(ins);$('expense').textContent=rupiah(outs);
+ $('goal').value=state.goal||'';
+ const saved=state.tx.filter(t=>t.type==='in'&&t.date.slice(0,7)===month).reduce((a,t)=>a+t.amount,0);
+ const pct=state.goal?Math.min(100,Math.round(saved/state.goal*100)):0;
+ $('progressText').textContent=pct+'%';$('progressBar').style.width=pct+'%';
+ $('goalCaption').textContent=state.goal?rupiah(saved)+' dari '+rupiah(state.goal):'Atur target untuk mulai melacak tabungan.';
+ const sorted=[...state.tx].sort((a,b)=>b.id-a.id);
+ $('history').innerHTML=sorted.length?sorted.map(t=>`<div class="item"><div><strong>${escapeHtml(t.note)}</strong><small>${new Date(t.id).toLocaleString('id-ID')}</small></div><div class="amount ${t.type==='in'?'green':'red'}">${t.type==='in'?'+':'−'}${rupiah(t.amount)}</div></div>`).join(''):'<div class="empty">Belum ada transaksi. Yuk catat transaksi pertamamu!</div>';
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('txForm').addEventListener('submit',e=>{e.preventDefault();const amount=Number($('amount').value);const note=$('note').value.trim();if(!amount||amount<1||!note)return;state.tx.push({id:Date.now(),type:$('type').value,amount,note,date:new Date().toISOString()});$('amount').value='';$('note').value='';save()});
+$('saveGoal').addEventListener('click',()=>{state.goal=Math.max(0,Number($('goal').value)||0);save()});
+$('reset').addEventListener('click',()=>{if(confirm('Yakin hapus semua transaksi dan target? Data tidak bisa dikembalikan.')){state={tx:[],goal:0};save()}});
+$('export').addEventListener('click',()=>{const rows=[['Tanggal','Jenis','Nominal','Keterangan'],...state.tx.map(t=>[t.date,t.type,t.amount,t.note])];const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='eak-wallet-backup.csv';a.click();URL.revokeObjectURL(a.href)});
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+render();
+</script>
+</body></html>

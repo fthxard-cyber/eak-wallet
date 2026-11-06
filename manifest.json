@@ -1,0 +1,14 @@
+{
+  "name": "EAK WALLET",
+  "short_name": "EAK WALLET",
+  "description": "Catatan uang masuk, uang keluar, dan target tabungan.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0e14",
+  "theme_color": "#10131b",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}
+  ]
+}
